@@ -40,17 +40,14 @@ jobs:
         path: ~/.buildozer
         key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
-    - name: Install Android SDK build-tools
+    - name: Accept Android licenses (prevent interactive prompts)
       run: |
-        # تثبيت build-tools عبر sdkmanager
-        yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;34.0.0" || true
-
-    - name: Accept Android licenses
-      run: |
+        # قبول التراخيص قبل أن يطلبها buildozer
         yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
 
     - name: Build with buildozer
       run: |
+        # الآن buildozer سيقوم بتنزيل كل شيء بما في ذلك build-tools
         buildozer android debug
 
     - name: Upload APK
