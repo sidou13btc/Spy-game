@@ -40,14 +40,26 @@ jobs:
         path: ~/.buildozer
         key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
-    - name: Accept Android licenses
+    - name: Ensure buildozer creates SDK structure
       run: |
-        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
+        # تشغيل buildozer لفترة قصيرة لإنشاء هيكل المجلدات (إذا لم يكن موجوداً)
+        buildozer init || true
+        buildozer android update || true
 
     - name: Install Android SDK build-tools 34.0.0
       run: |
-        # تثبيت build-tools يدوياً لضمان وجود aidl
-        yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;34.0.0"
+        # استخدام sdkmanager من مجلد buildozer
+        SDKMANAGER="$HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
+        if [ ! -f "$SDKMANAGER" ]; then
+          echo "sdkmanager not found! Android SDK may not be downloaded yet."
+          exit 1
+        fi
+        echo "y" | $SDKMANAGER "build-tools;34.0.0"
+
+    - name: Accept Android licenses
+      run: |
+        SDKMANAGER="$HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
+        echo "y" | $SDKMANAGER --licenses || true
 
     - name: Build with buildozer
       run: |
