@@ -40,16 +40,13 @@ jobs:
         path: ~/.buildozer
         key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
-    - name: Accept Android licenses automatically
+    - name: Accept Android licenses
       run: |
-        # هذا سيقبل التراخيص المطلوبة لـ sdkmanager
+        # قبول التراخيص تلقائياً
         yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
-        # أو يمكنك استخدام الأمر التالي إذا كان متغير ANDROID_HOME غير مضبوط
-        # yes | /usr/local/lib/android/sdk/tools/bin/sdkmanager --licenses
 
     - name: Build with buildozer
       run: |
-        # استخدام buildozer مباشرة بدون pipe، سيطلب التراخيص لكننا قبلناها بالفعل
         buildozer android debug
 
     - name: Upload APK
