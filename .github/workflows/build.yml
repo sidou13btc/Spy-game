@@ -13,57 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install system dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y \
-          git wget unzip \
-          openjdk-17-jdk \
-          python3-pip \
-          autoconf libtool pkg-config \
-          zlib1g-dev libncurses5-dev \
-          cmake libffi-dev libssl-dev
-
-    - name: Install Cython and buildozer
-      run: |
-        pip install --upgrade pip
-        pip install cython buildozer
-
-    - name: Cache Android SDK/NDK
-      uses: actions/cache@v4
-      with:
-        path: ~/.buildozer
-        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-
-    - name: Ensure buildozer creates SDK structure
-      run: |
-        # تشغيل buildozer لفترة قصيرة لإنشاء هيكل المجلدات (إذا لم يكن موجوداً)
-        buildozer init || true
-        buildozer android update || true
-
-    - name: Install Android SDK build-tools 34.0.0
-      run: |
-        # استخدام sdkmanager من مجلد buildozer
-        SDKMANAGER="$HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
-        if [ ! -f "$SDKMANAGER" ]; then
-          echo "sdkmanager not found! Android SDK may not be downloaded yet."
-          exit 1
-        fi
-        echo "y" | $SDKMANAGER "build-tools;34.0.0"
-
-    - name: Accept Android licenses
-      run: |
-        SDKMANAGER="$HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
-        echo "y" | $SDKMANAGER --licenses || true
-
     - name: Build with buildozer
-      run: |
-        buildozer android debug
+      uses: kivy/buildozer-action@v3
+      with:
+        buildozer_cmd: buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
