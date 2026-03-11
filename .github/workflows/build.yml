@@ -1,10 +1,9 @@
-apkuild Android APK
+name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -50,4 +49,3 @@ jobs:
       with:
         name: app-debug
         path: bin/*.apk
-        
