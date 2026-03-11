@@ -16,7 +16,7 @@ android.api = 31
 android.minapi = 21
 android.ndk = 25b
 android.archs = arm64-v8a
-android.build_tools = 34.0.0   # سيطلب buildozer تثبيت هذه النسخة
+android.build_tools = 34.0.0   # للإشارة فقط، سنقوم بتثبيتها يدوياً
 android.gradle_dependencies = ''
 android.permissions = INTERNET
 
